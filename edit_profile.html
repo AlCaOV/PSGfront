@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редагування профілю | Postogram</title>
+    <link rel="stylesheet" href="css/feed.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="user-avatar-btn" id="profileRedirectBtn" title="Мій профіль">
+            <span id="currentUserInitial"></span>
+        </div>
+        <nav class="side-nav">
+            <button class="nav-btn" id="homeBtn" title="Головна стрічка"><i class="fa-solid fa-house"></i></button>
+            <button class="nav-btn" id="openCreatePostBtn" title="Створити пост"><i class="fa-solid fa-square-plus"></i></button>
+            <div class="bottom-nav">
+                <button class="nav-btn" id="logoutBtn" title="Вийти"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+                <button class="nav-btn" id="scrollToFooterBtn" title="Допомога"><i class="fa-solid fa-circle-question"></i></button>
+            </div>
+        </nav>
+    </aside>
+
+    <div class="main-content-wrapper">
+        <header class="top-header">
+            <img src="assets/img/logo-dark-transparent.png" class="header-logo-img" alt="Logo">
+            <div class="search-container">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="searchInput" placeholder="search users" autocomplete="off">
+                <div class="search-dropdown" id="searchDropdown"></div>
+            </div>
+        </header>
+
+        <main class="feed-section">
+            <div class="edit-profile-wrapper">
+                
+                <div class="edit-top-row">
+                    <div class="edit-avatar-col">
+                        <div class="edit-avatar-circle" id="editAvatarCircle">
+                            <input type="file" id="editAvatarInput" accept="image/*" hidden>
+                            <img id="editAvatarPreview" src="" style="display: none;">
+                            <div class="edit-avatar-overlay" id="editAvatarOverlay">
+                                <i class="fa-solid fa-file-circle-plus"></i>
+                            </div>
+                        </div>
+                        <span class="edit-avatar-label">Avatar</span>
+                    </div>
+                    
+                    <div class="edit-info-col">
+                        <div class="edit-input-group">
+                            <input type="text" id="editFullName" placeholder="Full name">
+                            <label>| Full name</label>
+                        </div>
+                        <div class="edit-input-group">
+                            <input type="text" id="editUsername" placeholder="@Username" disabled>
+                            <label>| Username</label>
+                        </div>
+                        <div class="edit-input-group">
+                            <input type="email" id="editEmail" placeholder="Email" disabled>
+                            <label>| Email</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="edit-bottom-row">
+                    <div class="edit-bio-col">
+                        <div class="edit-bio-header">Bio</div>
+                        <div class="edit-bio-body">
+                            <textarea id="editBioInput" maxlength="2000" placeholder="Напишіть щось про себе..."></textarea>
+                            <span class="edit-char-counter" id="editCharCounter">0/2000</span>
+                        </div>
+                    </div>
+                    
+                    <div class="edit-buttons-col">
+                        <button id="saveProfileBtn" class="edit-save-btn">Save changes</button>
+                        <button id="declineProfileBtn" class="edit-decline-btn">Decline changes</button>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <footer class="site-footer" id="footer">
+            <div class="footer-col">
+                <img src="assets/img/logo-light-transparent.png" class="header-logo-img" alt="Logo Light">
+                <h3>Find us</h3>
+                <p>Yurekserednij@gmail.com<br>Telegram: @AlCaOV<br>TikTok: @AlCaOV</p>
+            </div>
+            <div class="footer-col right-align">
+                <h3>Need help?<br>contact us!</h3>
+                <p>PostOGram@gmail.com<br>Telegram: @postogram<br>Viber: 0989063261</p>
+                <p>0989063261<br>0975679873<br>0503017898</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="js/edit_profile.js"></script>
+</body>
+</html>

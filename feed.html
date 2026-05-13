@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Головна стрічка | Postogram</title>
+    <link rel="stylesheet" href="css/feed.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <aside class="sidebar">
+       
+        <div class="user-avatar-btn" id="profileRedirectBtn" title="Мій профіль">
+            <span id="currentUserInitial"></span>
+        </div>
+        
+    
+        <nav class="side-nav">
+            <button class="nav-btn active" id="homeBtn" title="Головна стрічка">
+                <i class="fa-solid fa-house"></i>
+            </button>
+            <button class="nav-btn" id="openCreatePostBtn" title="Створити пост">
+                <i class="fa-solid fa-square-plus"></i>
+            </button>
+            
+            <div class="bottom-nav">
+                
+                <button class="nav-btn" id="logoutBtn" title="Вийти">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                </button>
+                <button class="nav-btn" id="scrollToFooterBtn" title="Допомога">
+                    <i class="fa-solid fa-circle-question"></i>
+                </button>
+            </div>
+        </nav>
+    </aside>
+
+    <div class="main-content-wrapper">
+        
+        <header class="top-header">
+            <img src="assets/img/logo-dark-transparent.png" class="header-logo-img" alt="Logo">
+            
+         
+            <div class="search-container">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="searchInput" placeholder="search users" autocomplete="off">
+                
+                <div class="search-dropdown" id="searchDropdown"></div>
+            </div>
+        </header>
+
+        <main class="feed-section">
+            <!-- Головна стрічка -->
+            <div id="feedContainer" class="feed-container"></div>
+            
+         
+            <button class="load-more-btn" id="loadMoreBtn" style="display: none;">
+                Load next posts <i class="fa-solid fa-angle-down"></i>
+            </button>
+        </main>
+
+        <footer class="site-footer" id="footer">
+            <div class="footer-col">
+                <img src="assets/img/logo-light-transparent.png" class="header-logo-img" alt="Logo Light">
+                <h3>Find us</h3>
+                <p>Yurekserednij@gmail.com<br>Telegram: @AlCaOV<br>TikTok: @AlCaOV</p>
+            </div>
+            <div class="footer-col right-align">
+                <h3>Need help?<br>contact us!</h3>
+                <p>PostOGram@gmail.com<br>Telegram: @postogram<br>Viber: 0989063261</p>
+                <p>0989063261<br>0975679873<br>0503017898</p>
+            </div>
+        </footer>
+
+    </div>
+
+  
+    <div class="modal-overlay" id="logoutModal" style="display: none;">
+        <div class="logout-modal-content">
+            <i class="fa-solid fa-person-walking-arrow-right logout-icon"></i>
+            <h3>Are u sure about logout?</h3>
+            <hr class="logout-divider">
+            <div class="logout-buttons-row">
+                <button id="confirmLogout" class="logout-btn">Yes</button>
+                <div class="logout-vert-line"></div>
+                <button id="cancelLogout" class="logout-btn">No</button>
+            </div>
+        </div>
+    </div>
+    <div id="createPostModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create post</h3>
+                <button id="closeCreatePostBtn" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                
+                <div class="upload-area" id="uploadArea">
+                    <input type="file" id="postImageInput" accept="image/*" hidden>
+                    
+                    <div id="uploadPlaceholder" class="upload-placeholder">
+                        <i class="fa-solid fa-file-circle-plus fa-3x"></i>
+                    </div>
+                    
+                    <img id="postImagePreview" src="" alt="Preview" style="display: none;">
+                    
+                    <button id="changeFileBtn" class="change-file-btn" style="display: none;">
+                        <i class="fa-solid fa-file-circle-plus"></i> Change file
+                    </button>
+                </div>
+
+               
+                <div class="caption-area">
+                    <div class="author-info">
+                        <img src="default-avatar.png" id="currentUserAvatarPost" class="avatar-small" alt="Avatar">
+                        <span id="currentUserNamePost">@username</span>
+                    </div>
+                    
+                    <textarea id="postCaptionInput" placeholder="Write a caption..." maxlength="2000"></textarea>
+                    
+                    <div class="caption-footer">
+                        <span id="charCounter">0/2000</span>
+                        <button id="sharePostBtn" class="share-btn">Share</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/feed.js"></script>
+</body>
+</html>
