@@ -14,9 +14,6 @@ function getCleanImageUrl(url) {
     return `${API_BASE_URL}/api/images/${cleanFileName}`;
 }
 
-// ==========================================
-// 1. ЗАВАНТАЖЕННЯ ПОСТІВ ДЛЯ ПРОФІЛЮ
-// ==========================================
 async function loadUserPosts() {
     const token = localStorage.getItem('jwt_token') ? localStorage.getItem('jwt_token').replace(/"/g, '') : null;
     if (!token) return;
@@ -27,10 +24,12 @@ async function loadUserPosts() {
 
         const meRes = await fetch(`${API_BASE_URL}/api/profiles/me`, {
             method: 'GET',
-            headers: { 'Authorization': `Bearer ${token}` }
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'ngrok-skip-browser-warning': '69420'
+            }
         });
         
-        // ПРАВИЛЬНИЙ ЗАПИС У ГЛОБАЛЬНУ ЗМІННУ
         if (meRes.ok) {
             const myProfile = await meRes.json();
             myId = myProfile.userId; 
@@ -39,16 +38,16 @@ async function loadUserPosts() {
         targetUserId = idFromUrl || myId;
         isOwner = (String(targetUserId) === String(myId));
 
-        if (!targetUserId) {
-            console.error("Не вдалося визначити власника профілю");
-            return;
-        }
+        if (!targetUserId) return;
 
         await loadProfileHeader(targetUserId, token);
 
         const response = await fetch(`${API_BASE_URL}/api/users/${targetUserId}/posts`, {
             method: 'GET',
-            headers: { 'Authorization': `Bearer ${token}` }
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'ngrok-skip-browser-warning': '69420'
+            }
         });
 
         if (response.ok) {
@@ -76,17 +75,14 @@ async function loadUserPosts() {
 
             showNextPosts();
         }
-    } catch (error) {
-        console.error("Помилка завантаження профілю:", error);
-    }
+    } catch (error) { console.error("Помилка завантаження профілю:", error); }
 }
 
-// ==========================================
-// 2. ЗАВАНТАЖЕННЯ ДАНИХ ШАПКИ
-// ==========================================
 async function loadProfileHeader(userId, token) {
     try {
-        const profRes = await fetch(`${API_BASE_URL}/api/profiles/users/${userId}`, { headers: { 'Authorization': `Bearer ${token}` } });
+        const profRes = await fetch(`${API_BASE_URL}/api/profiles/users/${userId}`, { 
+            headers: { 'Authorization': `Bearer ${token}`, 'ngrok-skip-browser-warning': '69420' } 
+        });
         if (profRes.ok) {
             const profile = await profRes.json();
             document.getElementById('profileFullName').textContent = profile.fullName || 'Користувач';
@@ -101,7 +97,9 @@ async function loadProfileHeader(userId, token) {
             }
         }
 
-        const followersRes = await fetch(`${API_BASE_URL}/api/friendships/users/${userId}/followers`, { headers: { 'Authorization': `Bearer ${token}` } });
+        const followersRes = await fetch(`${API_BASE_URL}/api/friendships/users/${userId}/followers`, { 
+            headers: { 'Authorization': `Bearer ${token}`, 'ngrok-skip-browser-warning': '69420' } 
+        });
         if (followersRes.ok) {
             const data = await followersRes.json();
             const followersList = data._embedded ? data._embedded.friendshipResponseList : (Array.isArray(data) ? data : []);
@@ -115,7 +113,9 @@ async function loadProfileHeader(userId, token) {
             }
         }
 
-        const followingRes = await fetch(`${API_BASE_URL}/api/friendships/users/${userId}/followees`, { headers: { 'Authorization': `Bearer ${token}` } });
+        const followingRes = await fetch(`${API_BASE_URL}/api/friendships/users/${userId}/followees`, { 
+            headers: { 'Authorization': `Bearer ${token}`, 'ngrok-skip-browser-warning': '69420' } 
+        });
         if (followingRes.ok) {
             const data = await followingRes.json();
             const followingList = data._embedded ? data._embedded.friendshipResponseList : (Array.isArray(data) ? data : []);
@@ -129,9 +129,7 @@ async function loadProfileHeader(userId, token) {
             if (addStoryBtn) addStoryBtn.style.display = 'flex'; 
             
             actionBox.innerHTML = `<button class="edit-profile-btn" id="editProfileBtn">Редагувати профіль</button>`;
-            document.getElementById('editProfileBtn').addEventListener('click', () => {
-                window.location.href = 'edit_profile.html';
-            });
+            document.getElementById('editProfileBtn').addEventListener('click', () => window.location.href = 'edit_profile.html');
         } else {
             if (addStoryBtn) addStoryBtn.style.display = 'none'; 
             
@@ -156,15 +154,16 @@ async function loadProfileHeader(userId, token) {
     } catch (e) { console.error("Помилка завантаження статистики", e); }
 }
 
-// ==========================================
-// 3. ПІДПИСКА ТА ВІДПИСКА
-// ==========================================
 async function followUser() {
     const token = localStorage.getItem('jwt_token') ? localStorage.getItem('jwt_token').replace(/"/g, '') : null;
     try {
         const res = await fetch(`${API_BASE_URL}/api/friendships/users/${myId}/followees`, {
             method: 'POST',
-            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+            headers: { 
+                'Authorization': `Bearer ${token}`, 
+                'Content-Type': 'application/json',
+                'ngrok-skip-browser-warning': '69420'
+            },
             body: JSON.stringify({ 
                 followeeId: parseInt(targetUserId), 
                 followerId: parseInt(myId),
@@ -173,9 +172,7 @@ async function followUser() {
         });
         if (res.ok) {
             loadProfileHeader(targetUserId, token);
-        } else {
-            console.error("Бекенд відхилив запит:", await res.text());
-        }
+        } else { console.error("Бекенд відхилив запит:", await res.text()); }
     } catch (e) { console.error("Помилка підписки:", e); }
 }
 
@@ -185,7 +182,10 @@ async function unfollowUser() {
     try {
         const res = await fetch(`${API_BASE_URL}/api/friendships/users/${myId}/${friendshipIdIfFollowing}`, {
             method: 'DELETE',
-            headers: { 'Authorization': `Bearer ${token}` }
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'ngrok-skip-browser-warning': '69420'
+            }
         });
         if (res.ok) {
             friendshipIdIfFollowing = null;
@@ -194,13 +194,9 @@ async function unfollowUser() {
     } catch (e) { console.error("Помилка відписки:", e); }
 }
 
-// ==========================================
-// 4. ВІДОБРАЖЕННЯ ПОСТІВ
-// ==========================================
 function showNextPosts() {
     const container = document.getElementById('feedContainer');
     const loadMoreBtn = document.getElementById('loadMoreBtn');
-    
     const postsToShow = allPostsList.slice(postsDisplayed, postsDisplayed + POSTS_CHUNK);
     
     postsToShow.forEach(post => {
@@ -276,18 +272,14 @@ function showNextPosts() {
                 ${deleteBtnHtml}
             </div>
         `;
-        
         container.insertAdjacentHTML('beforeend', postCard);
     });
 
     postsDisplayed += postsToShow.length;
 
     if (loadMoreBtn) {
-        if (postsDisplayed >= allPostsList.length) {
-            loadMoreBtn.style.display = 'none';
-        } else {
-            loadMoreBtn.style.display = 'flex';
-        }
+        if (postsDisplayed >= allPostsList.length) loadMoreBtn.style.display = 'none';
+        else loadMoreBtn.style.display = 'flex';
     }
 }
 
@@ -296,7 +288,11 @@ async function toggleLike(postId) {
     try {
         const response = await fetch(`${API_BASE_URL}/api/posts/${postId}/likes`, {
             method: 'POST',
-            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+            headers: { 
+                'Authorization': `Bearer ${token}`, 
+                'Content-Type': 'application/json',
+                'ngrok-skip-browser-warning': '69420'
+            },
             body: JSON.stringify({}) 
         });
         if (response.ok) {
@@ -326,7 +322,11 @@ async function addComment(event, postId) {
     try {
         const response = await fetch(`${API_BASE_URL}/api/posts/${postId}/comments`, {
             method: 'POST',
-            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+            headers: { 
+                'Authorization': `Bearer ${token}`, 
+                'Content-Type': 'application/json',
+                'ngrok-skip-browser-warning': '69420'
+            },
             body: JSON.stringify({ body: text }) 
         });
 
@@ -358,23 +358,22 @@ async function addComment(event, postId) {
     }
 }
 
-// ==========================================
-// 5. ЛОГІКА СТОРІС
-// ==========================================
 let userStories = [];
 let currentStoryIndex = 0;
 let storyAnimationId = null;
 
 async function loadStories(token) {
     if (!targetUserId) return;
-    
     const container = document.getElementById('storiesContainer');
     if (!container) return;
     container.innerHTML = ''; 
 
     try {
         const res = await fetch(`${API_BASE_URL}/api/stories/users/${targetUserId}`, {
-            headers: { 'Authorization': `Bearer ${token}` }
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'ngrok-skip-browser-warning': '69420'
+            }
         });
         
         if (res.ok) {
@@ -479,9 +478,6 @@ function startImageProgress(durationMs, fillEl, timerEl) {
     storyAnimationId = requestAnimationFrame(step);
 }
 
-// ==========================================
-// ГЛОБАЛЬНЕ ВІДКРИТТЯ МОДАЛКИ СТОРІС
-// ==========================================
 window.openCreateStoryModal = function() {
     const modal = document.getElementById('createStoryModal');
     if (modal) {
@@ -492,24 +488,17 @@ window.openCreateStoryModal = function() {
     }
 };
 
-// ==========================================
-// ВИДАЛЕННЯ ПОСТА
-// ==========================================
 let postToDeleteId = null;
-
 window.openDeleteModal = function(postId) {
     postToDeleteId = postId;
     document.getElementById('deletePostModal').style.display = 'flex';
 };
 
-// ==========================================
-// ІНІЦІАЛІЗАЦІЯ ПІСЛЯ ЗАВАНТАЖЕННЯ DOM
-// ==========================================
 document.addEventListener('DOMContentLoaded', () => {
     let rawToken = localStorage.getItem('jwt_token');
     const token = rawToken ? rawToken.replace(/"/g, '') : null;
 
-    loadUserPosts(); // Головний старт
+    loadUserPosts(); 
 
     const loadMoreBtnEl = document.getElementById('loadMoreBtn');
     if (loadMoreBtnEl) loadMoreBtnEl.addEventListener('click', showNextPosts);
@@ -521,7 +510,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!token) return;
             try {
                 const response = await fetch(`${API_BASE_URL}/api/profiles/me`, {
-                    method: 'GET', headers: { 'Authorization': `Bearer ${token}` }
+                    method: 'GET', 
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'ngrok-skip-browser-warning': '69420'
+                    }
                 });
                 if (response.ok) {
                     const profileData = await response.json();
@@ -552,7 +545,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const footer = document.getElementById('footer');
     if (scrollToFooterBtn && footer) scrollToFooterBtn.addEventListener('click', () => footer.scrollIntoView({ behavior: 'smooth' }));
 
-    // Логіка створення поста
     const createModal = document.getElementById('createPostModal');
     const openCreateBtn = document.getElementById('openCreatePostBtn'); 
     const closeCreateBtn = document.getElementById('closeCreatePostBtn');
@@ -593,7 +585,12 @@ document.addEventListener('DOMContentLoaded', () => {
         shareBtn.textContent = 'Sharing...'; shareBtn.disabled = true;
         try {
             const response = await fetch(`${API_BASE_URL}/api/posts/with-media`, {
-                method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: formData
+                method: 'POST', 
+                headers: { 
+                    'Authorization': `Bearer ${token}`,
+                    'ngrok-skip-browser-warning': '69420'
+                }, 
+                body: formData
             });
             if (response.ok) {
                 createModal.style.display = 'none'; resetForm();
@@ -610,24 +607,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if(changeFileBtn) changeFileBtn.style.display = 'none';
     }
 
-    // Логіка видалення поста
     const cancelDeleteBtn = document.getElementById('cancelDeletePostBtn');
     const confirmDeleteBtn = document.getElementById('confirmDeletePostBtn');
     const deleteModal = document.getElementById('deletePostModal');
 
-    if (cancelDeleteBtn) {
-        cancelDeleteBtn.addEventListener('click', () => {
-            deleteModal.style.display = 'none';
-            postToDeleteId = null;
-        });
-    }
+    if (cancelDeleteBtn) cancelDeleteBtn.addEventListener('click', () => { deleteModal.style.display = 'none'; postToDeleteId = null; });
 
     if (confirmDeleteBtn) {
         confirmDeleteBtn.addEventListener('click', async () => {
             if (!postToDeleteId) return;
             try {
                 const res = await fetch(`${API_BASE_URL}/api/posts/${postToDeleteId}`, {
-                    method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` }
+                    method: 'DELETE', 
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'ngrok-skip-browser-warning': '69420'
+                    }
                 });
                 if (res.ok || res.status === 204) {
                     const postElement = document.getElementById(`post-${postToDeleteId}`);
@@ -641,18 +636,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Логіка створення сторіс
     const storyMediaInput = document.getElementById('storyMediaInput');
     const storyUploadArea = document.getElementById('storyUploadArea');
     const changeStoryFileBtn = document.getElementById('changeStoryFileBtn');
     const shareStoryBtn = document.getElementById('shareStoryBtn');
     const createStoryModal = document.getElementById('createStoryModal');
 
-    if (storyUploadArea) {
-        storyUploadArea.addEventListener('click', (e) => {
-            if (e.target !== changeStoryFileBtn && !changeStoryFileBtn.contains(e.target)) storyMediaInput.click();
-        });
-    }
+    if (storyUploadArea) storyUploadArea.addEventListener('click', (e) => { if (e.target !== changeStoryFileBtn && !changeStoryFileBtn.contains(e.target)) storyMediaInput.click(); });
     if (changeStoryFileBtn) changeStoryFileBtn.addEventListener('click', (e) => { e.stopPropagation(); storyMediaInput.click(); });
 
     if (storyMediaInput) {
@@ -689,12 +679,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 const response = await fetch(`${API_BASE_URL}/api/stories/with-media`, {
-                    method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: formData
+                    method: 'POST', 
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'ngrok-skip-browser-warning': '69420'
+                    }, 
+                    body: formData
                 });
                 if (response.ok) {
                     createStoryModal.style.display = 'none';
                     loadStories(token); 
-                    // Скидаємо форму
                     storyMediaInput.value = '';
                     document.getElementById('storyCaptionInput').value = '';
                     document.getElementById('storyUploadPlaceholder').style.display = 'block';
@@ -707,7 +701,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Логаут
     const logoutBtn = document.getElementById('logoutBtn');
     const logoutModal = document.getElementById('logoutModal');
     const confirmLogout = document.getElementById('confirmLogout');
@@ -716,7 +709,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cancelLogout && logoutModal) cancelLogout.addEventListener('click', () => logoutModal.style.display = 'none');
     if (confirmLogout) confirmLogout.addEventListener('click', () => { localStorage.removeItem('jwt_token'); window.location.href = 'index.html'; });
 
-    // Пошук
     const searchInput = document.getElementById('searchInput');
     const searchDropdown = document.getElementById('searchDropdown');
     if (searchInput && searchDropdown) {
@@ -727,7 +719,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (query.length > 0) {
                 searchTimeout = setTimeout(async () => {
                     try {
-                        const res = await fetch(`${API_BASE_URL}/api/profiles`, { headers: { 'Authorization': `Bearer ${token}` } });
+                        const res = await fetch(`${API_BASE_URL}/api/profiles`, { 
+                            headers: { 
+                                'Authorization': `Bearer ${token}`,
+                                'ngrok-skip-browser-warning': '69420'
+                            } 
+                        });
                         if (res.ok) {
                             let profiles = await res.json();
                             if (profiles._embedded && profiles._embedded.profileResponseList) profiles = profiles._embedded.profileResponseList;

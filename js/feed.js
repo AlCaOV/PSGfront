@@ -16,25 +16,25 @@ async function loadPosts() {
     try {
         const response = await fetch(`${API_BASE_URL}/api/posts/feed`, {
             method: 'GET',
-            headers: { 'Authorization': `Bearer ${token}` }
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'ngrok-skip-browser-warning': '69420'
+            }
         });
 
         if (response.ok) {
             allPostsList = await response.json();
             allPostsList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             
-         
             document.getElementById('feedContainer').innerHTML = '';
             postsDisplayed = 0;
             
-          
             showNextPosts();
         }
     } catch (error) {
         console.error("Помилка завантаження постів:", error);
     }
 }
-
 
 function showNextPosts() {
     const container = document.getElementById('feedContainer');
@@ -63,12 +63,10 @@ function showNextPosts() {
             ? `<img src="${getCleanImageUrl(post.ownerAvatar)}" class="avatar-new">` 
             : `<div class="avatar-new">${post.ownerName ? post.ownerName.charAt(0).toUpperCase() : 'U'}</div>`;
         
-        
         const imgHtml = post.imageUrl 
             ? `<img src="${getCleanImageUrl(post.imageUrl)}" class="post-img-new">` 
             : '';
 
-        
         const postCard = `
             <div class="post-wrapper-new" id="post-${post.id}">
                 <div class="post-header-top">
@@ -80,7 +78,6 @@ function showNextPosts() {
                 </div>
                 
                 <div class="post-card-body-new">
-                    
                     <div class="post-main-column">
                         ${imgHtml}
                         <div class="post-col-content">
@@ -98,7 +95,6 @@ function showNextPosts() {
                             </div>
                         </div>
                     </div>
-                    
                     <div class="post-col-comments">
                         <h3 class="comments-title">Comments</h3>
                         <div class="comments-list-new" id="comments-list-${post.id}">
@@ -109,7 +105,6 @@ function showNextPosts() {
                             <button type="submit" title="Send"><i class="fa-solid fa-paper-plane"></i></button>
                         </form>
                     </div>
-                    
                 </div>
             </div>
         `;
@@ -128,8 +123,6 @@ function showNextPosts() {
     }
 }
 
-
-
 async function toggleLike(postId) {
     const token = localStorage.getItem('jwt_token') ? localStorage.getItem('jwt_token').replace(/"/g, '') : null;
     try {
@@ -137,7 +130,8 @@ async function toggleLike(postId) {
             method: 'POST',
             headers: { 
                 'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'ngrok-skip-browser-warning': '69420'
             },
             body: JSON.stringify({}) 
         });
@@ -145,9 +139,7 @@ async function toggleLike(postId) {
         if (response.ok) {
             const countSpan = document.getElementById(`likes-count-${postId}`);
             const likeBtn = countSpan.closest('.like-btn-new');
-            
             let currentCount = parseInt(countSpan.textContent) || 0;
-            
             if (likeBtn.classList.contains('liked')) {
                 likeBtn.classList.remove('liked');
                 countSpan.textContent = Math.max(0, currentCount - 1);
@@ -155,19 +147,14 @@ async function toggleLike(postId) {
                 likeBtn.classList.add('liked');
                 countSpan.textContent = currentCount + 1;
             }
-        } else {
-            console.error("Помилка при постановці лайку");
         }
-    } catch (error) {
-        console.error("Помилка лайку:", error);
-    }
+    } catch (error) { console.error("Помилка лайку:", error); }
 }
 
 async function addComment(event, postId) {
     event.preventDefault(); 
     const inputField = document.getElementById(`comment-input-${postId}`);
     const text = inputField.value.trim();
-    
     if (!text) return; 
 
     const token = localStorage.getItem('jwt_token') ? localStorage.getItem('jwt_token').replace(/"/g, '') : null;
@@ -178,17 +165,16 @@ async function addComment(event, postId) {
             method: 'POST',
             headers: { 
                 'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json' 
+                'Content-Type': 'application/json',
+                'ngrok-skip-browser-warning': '69420'
             },
             body: JSON.stringify({ body: text }) 
         });
 
         if (response.ok) {
             inputField.value = ''; 
-            
             const commentsList = document.getElementById(`comments-list-${postId}`);
             const myName = document.getElementById('currentUserNamePost')?.textContent || 'You';
-            
             const newCommentHtml = `
                 <div class="comment-item-new">
                     <div class="comment-author-new">
@@ -198,11 +184,9 @@ async function addComment(event, postId) {
                     <div>${text}</div>
                 </div>
             `;
-            
             if (commentsList.innerHTML.includes('No comments yet')) {
                 commentsList.innerHTML = '';
             }
-            
             commentsList.insertAdjacentHTML('beforeend', newCommentHtml);
             commentsList.scrollTop = commentsList.scrollHeight;
 
@@ -211,31 +195,21 @@ async function addComment(event, postId) {
                 let currentCount = parseInt(countSpan.textContent.replace(/[^0-9]/g, '')) || 0;
                 countSpan.innerHTML = `<i class="fa-solid fa-comment-dots"></i> ${currentCount + 1}`;
             }
-            
         }
-    } catch (error) {
-        console.error("Помилка відправки коментаря:", error);
-    } finally {
-        inputField.disabled = false;
-        inputField.focus(); 
+    } catch (error) { console.error(error); } finally {
+        inputField.disabled = false; inputField.focus(); 
     }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    
     let rawToken = localStorage.getItem('jwt_token');
     const token = rawToken ? rawToken.replace(/"/g, '') : null;
 
-    
     loadPosts();
 
-    
     const loadMoreBtnEl = document.getElementById('loadMoreBtn');
-    if (loadMoreBtnEl) {
-        loadMoreBtnEl.addEventListener('click', showNextPosts);
-    }
+    if (loadMoreBtnEl) loadMoreBtnEl.addEventListener('click', showNextPosts);
 
- 
     const profileBtn = document.getElementById('profileRedirectBtn');
     if (profileBtn) {
         profileBtn.addEventListener('click', () => window.location.href = 'profile.html');
@@ -245,21 +219,21 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const response = await fetch(`${API_BASE_URL}/api/profiles/me`, {
                     method: 'GET',
-                    headers: { 'Authorization': `Bearer ${token}` }
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'ngrok-skip-browser-warning': '69420'
+                    }
                 });
 
                 if (response.ok) {
                     const profileData = await response.json();
-                    
                     const modalAvatar = document.getElementById('currentUserAvatarPost');
                     const modalName = document.getElementById('currentUserNamePost');
-                    
                     if (modalName) modalName.textContent = profileData.fullName || "User";
 
                     if (profileData.avatarUrl) {
                         const cleanFileName = profileData.avatarUrl.split('/').pop().split('\\').pop(); 
                         const avatarSrc = `${API_BASE_URL}/api/images/${cleanFileName}`;
-                        
                         profileBtn.innerHTML = `<img src="${avatarSrc}" alt="Avatar">`;
                         if (modalAvatar) modalAvatar.src = avatarSrc;
                     } else {
@@ -267,26 +241,18 @@ document.addEventListener('DOMContentLoaded', () => {
                         profileBtn.innerHTML = `<span>${initial}</span>`;
                     }
                 }
-            } catch (error) {
-                console.error("Не вдалося завантажити аватарку:", error);
-            }
+            } catch (error) { console.error(error); }
         }
         loadMyAvatar();
     }
    
-    // 4. НАВІГАЦІЯ
     const homeBtn = document.getElementById('homeBtn');
     if (homeBtn) homeBtn.addEventListener('click', () => window.location.href = 'feed.html');
 
     const scrollToFooterBtn = document.getElementById('scrollToFooterBtn');
     const footer = document.getElementById('footer');
-    if (scrollToFooterBtn && footer) {
-        scrollToFooterBtn.addEventListener('click', () => {
-            footer.scrollIntoView({ behavior: 'smooth' });
-        });
-    }
+    if (scrollToFooterBtn && footer) scrollToFooterBtn.addEventListener('click', () => footer.scrollIntoView({ behavior: 'smooth' }));
 
-    // 5. ВІКНО СТВОРЕННЯ ПОСТА
     const createModal = document.getElementById('createPostModal');
     const openCreateBtn = document.getElementById('openCreatePostBtn'); 
     const closeCreateBtn = document.getElementById('closeCreatePostBtn');
@@ -299,27 +265,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const charCounter = document.getElementById('charCounter');
     const shareBtn = document.getElementById('sharePostBtn');
 
-    if (openCreateBtn && createModal) {
-        openCreateBtn.addEventListener('click', () => {
-            createModal.style.display = 'flex';
-        });
-    }
-
-    if (closeCreateBtn) {
-        closeCreateBtn.addEventListener('click', () => {
-            createModal.style.display = 'none';
-            resetForm();
-        });
-    }
-
-    if (uploadArea) uploadArea.addEventListener('click', (e) => {
-        if (e.target !== changeFileBtn && !changeFileBtn.contains(e.target)) fileInput.click();
-    });
-    
-    if (changeFileBtn) changeFileBtn.addEventListener('click', (e) => {
-        e.stopPropagation(); 
-        fileInput.click();
-    });
+    if (openCreateBtn && createModal) openCreateBtn.addEventListener('click', () => createModal.style.display = 'flex');
+    if (closeCreateBtn) closeCreateBtn.addEventListener('click', () => { createModal.style.display = 'none'; resetForm(); });
+    if (uploadArea) uploadArea.addEventListener('click', (e) => { if (e.target !== changeFileBtn && !changeFileBtn.contains(e.target)) fileInput.click(); });
+    if (changeFileBtn) changeFileBtn.addEventListener('click', (e) => { e.stopPropagation(); fileInput.click(); });
 
     if (fileInput) fileInput.addEventListener('change', function(event) {
         const file = event.target.files[0];
@@ -335,20 +284,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    if (captionInput) {
-        captionInput.addEventListener('input', () => {
-            charCounter.textContent = `${captionInput.value.length}/2000`;
-        });
-    }
+    if (captionInput) captionInput.addEventListener('input', () => charCounter.textContent = `${captionInput.value.length}/2000`);
 
     if (shareBtn) shareBtn.addEventListener('click', async () => {
         const file = fileInput.files[0];
         const caption = captionInput.value.trim();
-
-        if (!file && !caption) {
-            alert("Please add a photo or a caption!");
-            return;
-        }
+        if (!file && !caption) { alert("Please add a photo or a caption!"); return; }
 
         const formData = new FormData();
         if (caption) formData.append('caption', caption);
@@ -360,7 +301,10 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch(`${API_BASE_URL}/api/posts/with-media`, {
                 method: 'POST',
-                headers: { 'Authorization': `Bearer ${token}` },
+                headers: { 
+                    'Authorization': `Bearer ${token}`,
+                    'ngrok-skip-browser-warning': '69420'
+                },
                 body: formData
             });
 
@@ -368,16 +312,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 createModal.style.display = 'none';
                 resetForm();
                 loadPosts(); 
-            } else {
-                alert("Failed to create post.");
-            }
-        } catch (error) {
-            console.error("Помилка:", error);
-            alert("Network error.");
-        } finally {
-            shareBtn.textContent = 'Share';
-            shareBtn.disabled = false;
-        }
+            } else { alert("Failed to create post."); }
+        } catch (error) { console.error(error); alert("Network error."); } 
+        finally { shareBtn.textContent = 'Share'; shareBtn.disabled = false; }
     });
 
     function resetForm() {
@@ -389,54 +326,37 @@ document.addEventListener('DOMContentLoaded', () => {
         if(charCounter) charCounter.textContent = '0/2000';
     }
 
-    // 6. ВІКНО ВИХОДУ З АКАУНТУ
     const logoutBtn = document.getElementById('logoutBtn');
     const logoutModal = document.getElementById('logoutModal');
     const confirmLogout = document.getElementById('confirmLogout');
     const cancelLogout = document.getElementById('cancelLogout');
-
     if (logoutBtn && logoutModal) logoutBtn.addEventListener('click', () => logoutModal.style.display = 'flex');
     if (cancelLogout && logoutModal) cancelLogout.addEventListener('click', () => logoutModal.style.display = 'none');
-    if (confirmLogout) confirmLogout.addEventListener('click', () => {
-        localStorage.removeItem('jwt_token');
-        window.location.href = 'index.html'; 
-    });
+    if (confirmLogout) confirmLogout.addEventListener('click', () => { localStorage.removeItem('jwt_token'); window.location.href = 'index.html'; });
 
-    // 7. ПОШУК
-    // ==========================================
     const searchInput = document.getElementById('searchInput');
     const searchDropdown = document.getElementById('searchDropdown');
-
     if (searchInput && searchDropdown) {
         let searchTimeout = null;
-
         searchInput.addEventListener('input', (e) => {
             const query = e.target.value.trim().toLowerCase();
             clearTimeout(searchTimeout);
-            
             if (query.length > 0) {
                 searchTimeout = setTimeout(async () => {
                     try {
                         const res = await fetch(`${API_BASE_URL}/api/profiles`, {
-                            headers: { 'Authorization': `Bearer ${token}` }
+                            headers: { 
+                                'Authorization': `Bearer ${token}`,
+                                'ngrok-skip-browser-warning': '69420'
+                            }
                         });
-                        
                         if (res.ok) {
                             let profiles = await res.json();
+                            if (profiles._embedded && profiles._embedded.profileResponseList) profiles = profiles._embedded.profileResponseList;
+                            else if (!Array.isArray(profiles)) profiles = [];
                             
-                            if (profiles._embedded && profiles._embedded.profileResponseList) {
-                                profiles = profiles._embedded.profileResponseList;
-                            } else if (!Array.isArray(profiles)) {
-                                profiles = [];
-                            }
-                            
-                            const filtered = profiles.filter(p => 
-                                p.username && p.username.toLowerCase().includes(query)
-                            ).slice(0, 6);
-
-                            // 1. ОЧИЩАЄМО СПИСОК ПЕРЕД НОВИМ ВИВОДОМ
+                            const filtered = profiles.filter(p => p.username && p.username.toLowerCase().includes(query)).slice(0, 6);
                             searchDropdown.innerHTML = '';
-
                             if (filtered.length > 0) {
                                 filtered.forEach(p => {
                                     const targetId = p.userId;
@@ -450,28 +370,18 @@ document.addEventListener('DOMContentLoaded', () => {
                                     `;
                                     searchDropdown.insertAdjacentHTML('beforeend', item);
                                 });
-                                // 2. РОБИМО СПИСОК ВИДИМИМ
                                 searchDropdown.classList.add('active');
                             } else {
-                                // Якщо нікого не знайшли
                                 searchDropdown.innerHTML = '<div style="padding: 10px; color: rgba(255,255,255,0.5); text-align: center;">No users found</div>';
                                 searchDropdown.classList.add('active');
                             }
                         }
-                    } catch (e) {
-                        console.error("Помилка пошуку", e);
-                    }
+                    } catch (e) { console.error("Помилка пошуку", e); }
                 }, 300);
-            } else {
-                searchDropdown.classList.remove('active');
-                searchDropdown.innerHTML = '';
-            }
+            } else { searchDropdown.classList.remove('active'); searchDropdown.innerHTML = ''; }
         });
-
         document.addEventListener('click', (e) => {
-            if (!searchInput.contains(e.target) && !searchDropdown.contains(e.target)) {
-                searchDropdown.classList.remove('active');
-            }
+            if (!searchInput.contains(e.target) && !searchDropdown.contains(e.target)) searchDropdown.classList.remove('active');
         });
     }
 });

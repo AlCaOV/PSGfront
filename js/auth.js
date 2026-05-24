@@ -72,18 +72,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 formData.append('email', email);
                 formData.append('password', password);
                 formData.append('fullName', document.getElementById('regFullName').value.trim());
-                
-                
                 formData.append('bio', document.getElementById('regCaption').value.trim()); 
                 
                 const avatarFile = document.getElementById('avatarInput').files[0];
                 if (avatarFile) {
                     formData.append('avatar', avatarFile); 
                 }
-
             
                 const signupResponse = await fetch(`${API_BASE_URL}/api/auth/signup`, {
                     method: 'POST',
+                    headers: {
+                        'ngrok-skip-browser-warning': '69420'
+                    },
                     body: formData 
                 });
 
@@ -92,11 +92,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert(`Помилка реєстрації: ${errorText}`);
                     return; 
                 }
-
                 
                 const loginResponse = await fetch(`${API_BASE_URL}/api/auth/signin`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'ngrok-skip-browser-warning': '69420'
+                    },
                     body: JSON.stringify({ username, password })
                 });
 
@@ -108,7 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 const token = await loginResponse.text();
                 localStorage.setItem('jwt_token', token); 
-
                 
                 window.location.href = 'feed.html';
 
@@ -136,16 +137,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 const response = await fetch(`${API_BASE_URL}/api/auth/signin`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'ngrok-skip-browser-warning': '69420'
                     },
                     body: JSON.stringify(loginData)
                 });
 
                 if (response.ok) {
-                    
                     const tokenData = await response.text();
                     localStorage.setItem('jwt_token', tokenData); 
-                    
                     window.location.href = 'feed.html';
                 } else {
                     alert('Неправильний логін або пароль. Спробуйте ще раз.');

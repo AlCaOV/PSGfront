@@ -31,7 +31,10 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadCurrentData() {
     try {
         const profRes = await fetch(`${API_BASE_URL}/api/profiles/me`, {
-            headers: { 'Authorization': `Bearer ${token}` }
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'ngrok-skip-browser-warning': '69420'
+            }
         });
         
         if (profRes.ok) {
@@ -42,9 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
             bioInput.value = profile.bio || '';
             updateCharCount();
 
-            // ТЕПЕР МИ БЕРЕМО ДАНІ ПРЯМО З ОБ'ЄКТА profile
             if (profile.username) usernameInput.value = `@${profile.username}`;
-            if (profile.email) emailInput.value = profile.email; // ЗАПОВНЮЄМО ІМЕЙЛ ТУТ
+            if (profile.email) emailInput.value = profile.email;
             
             if (profile.avatarUrl) {
                 const cleanFileName = profile.avatarUrl.split('/').pop().split('\\').pop();
@@ -53,8 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 avatarOverlay.style.display = 'none';
              }
             }
-        
-             // ВЕСЬ БЛОК З userRes (запит на /api/users/me) МОЖНА ВИДАЛИТИ
         } catch (e) { console.error("Помилка завантаження даних", e); }
     }
 
@@ -89,21 +89,22 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             let finalAvatarUrl = null;
 
-            // Якщо вибрали нову картинку - спочатку завантажуємо її (якщо у тебе є такий ендпоінт)
             if (selectedAvatarFile) {
                 const formData = new FormData();
                 formData.append('file', selectedAvatarFile);
                 const uploadRes = await fetch(`${API_BASE_URL}/api/profiles/avatar`, { 
                     method: 'POST',
-                    headers: { 'Authorization': `Bearer ${token}` },
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'ngrok-skip-browser-warning': '69420'
+                    },
                     body: formData
                 });
                 if (uploadRes.ok) {
-                    finalAvatarUrl = await uploadRes.text(); // Або JSON, залежно від бекенду
+                    finalAvatarUrl = await uploadRes.text();
                 }
             }
 
-            // Відправляємо PUT запит з текстовими даними
             const updatePayload = {
                 fullName: fullNameInput.value.trim(),
                 bio: bioInput.value.trim()
@@ -114,13 +115,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 method: 'PUT',
                 headers: { 
                     'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'ngrok-skip-browser-warning': '69420'
                 },
                 body: JSON.stringify(updatePayload)
             });
 
             if (updateRes.ok) {
-                window.location.href = 'profile.html'; // Повертаємось у профіль
+                window.location.href = 'profile.html';
             } else {
                 alert("Не вдалося зберегти зміни.");
             }
