@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. ЗАВАНТАЖЕННЯ ДАНИХ ПРИ СТАРТІ
     async function loadCurrentData() {
     try {
-        const profRes = await fetch('http://localhost:8080/api/profiles/me', {
+        const profRes = await fetch(`${API_BASE_URL}/api/profiles/me`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (profile.avatarUrl) {
                 const cleanFileName = profile.avatarUrl.split('/').pop().split('\\').pop();
-                avatarPreview.src = `http://localhost:8080/api/images/${cleanFileName}`;
+                avatarPreview.src = `${API_BASE_URL}/api/images/${cleanFileName}`;
                 avatarPreview.style.display = 'block';
                 avatarOverlay.style.display = 'none';
              }
@@ -90,11 +90,10 @@ document.addEventListener('DOMContentLoaded', () => {
             let finalAvatarUrl = null;
 
             // Якщо вибрали нову картинку - спочатку завантажуємо її (якщо у тебе є такий ендпоінт)
-            // ПРИМІТКА: Якщо ендпоінта для аватара ще немає, цей блок можна закоментувати
             if (selectedAvatarFile) {
                 const formData = new FormData();
                 formData.append('file', selectedAvatarFile);
-                const uploadRes = await fetch(`http://localhost:8080/api/profiles/avatar`, { // Заміни на свій URL
+                const uploadRes = await fetch(`${API_BASE_URL}/api/profiles/avatar`, { 
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${token}` },
                     body: formData
@@ -111,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             if (finalAvatarUrl) updatePayload.avatarUrl = finalAvatarUrl;
 
-            const updateRes = await fetch(`http://localhost:8080/api/profiles/${currentUserId}`, {
+            const updateRes = await fetch(`${API_BASE_URL}/api/profiles/${currentUserId}`, {
                 method: 'PUT',
                 headers: { 
                     'Authorization': `Bearer ${token}`,
@@ -141,4 +140,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // Навігація в сайдбарі
     document.getElementById('homeBtn')?.addEventListener('click', () => window.location.href = 'feed.html');
     document.getElementById('profileRedirectBtn')?.addEventListener('click', () => window.location.href = 'profile.html');
-}); 
+});

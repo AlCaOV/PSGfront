@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
             
-                const signupResponse = await fetch('http://localhost:8080/api/auth/signup', {
+                const signupResponse = await fetch(`${API_BASE_URL}/api/auth/signup`, {
                     method: 'POST',
                     body: formData 
                 });
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 
-                const loginResponse = await fetch('http://localhost:8080/api/auth/signin', {
+                const loginResponse = await fetch(`${API_BASE_URL}/api/auth/signin`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password })
@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             try {
-                const response = await fetch('http://localhost:8080/api/auth/signin', {
+                const response = await fetch(`${API_BASE_URL}/api/auth/signin`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             } catch (error) {
                 console.error("Помилка з'єднання:", error);
-                alert("Не вдалося підключитися до сервера. Перевірити, чи запущений Spring Boot.");
+                alert("Не вдалося підключитися до сервера. Перевірити, чи запущений Spring Boot або тунель Ngrok.");
             }
         });
     }

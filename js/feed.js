@@ -6,7 +6,7 @@ function getCleanImageUrl(url) {
     if (!url) return ''; 
     if (url.startsWith('http')) return url;
     const cleanFileName = url.split('/').pop().split('\\').pop();
-    return `http://localhost:8080/api/images/${cleanFileName}`;
+    return `${API_BASE_URL}/api/images/${cleanFileName}`;
 }
 
 async function loadPosts() {
@@ -14,7 +14,7 @@ async function loadPosts() {
     if (!token) return;
 
     try {
-        const response = await fetch('http://localhost:8080/api/posts/feed', {
+        const response = await fetch(`${API_BASE_URL}/api/posts/feed`, {
             method: 'GET',
             headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -133,7 +133,7 @@ function showNextPosts() {
 async function toggleLike(postId) {
     const token = localStorage.getItem('jwt_token') ? localStorage.getItem('jwt_token').replace(/"/g, '') : null;
     try {
-        const response = await fetch(`http://localhost:8080/api/posts/${postId}/likes`, {
+        const response = await fetch(`${API_BASE_URL}/api/posts/${postId}/likes`, {
             method: 'POST',
             headers: { 
                 'Authorization': `Bearer ${token}`,
@@ -174,7 +174,7 @@ async function addComment(event, postId) {
     inputField.disabled = true;
 
     try {
-        const response = await fetch(`http://localhost:8080/api/posts/${postId}/comments`, {
+        const response = await fetch(`${API_BASE_URL}/api/posts/${postId}/comments`, {
             method: 'POST',
             headers: { 
                 'Authorization': `Bearer ${token}`,
@@ -243,7 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
         async function loadMyAvatar() {
             if (!token) return;
             try {
-                const response = await fetch('http://localhost:8080/api/profiles/me', {
+                const response = await fetch(`${API_BASE_URL}/api/profiles/me`, {
                     method: 'GET',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -258,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     if (profileData.avatarUrl) {
                         const cleanFileName = profileData.avatarUrl.split('/').pop().split('\\').pop(); 
-                        const avatarSrc = `http://localhost:8080/api/images/${cleanFileName}`;
+                        const avatarSrc = `${API_BASE_URL}/api/images/${cleanFileName}`;
                         
                         profileBtn.innerHTML = `<img src="${avatarSrc}" alt="Avatar">`;
                         if (modalAvatar) modalAvatar.src = avatarSrc;
@@ -358,7 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
         shareBtn.disabled = true;
 
         try {
-            const response = await fetch('http://localhost:8080/api/posts/with-media', {
+            const response = await fetch(`${API_BASE_URL}/api/posts/with-media`, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` },
                 body: formData
@@ -417,7 +417,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (query.length > 0) {
                 searchTimeout = setTimeout(async () => {
                     try {
-                        const res = await fetch(`http://localhost:8080/api/profiles`, {
+                        const res = await fetch(`${API_BASE_URL}/api/profiles`, {
                             headers: { 'Authorization': `Bearer ${token}` }
                         });
                         
@@ -440,7 +440,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             if (filtered.length > 0) {
                                 filtered.forEach(p => {
                                     const targetId = p.userId;
-                                    // Можеш додати сюди логіку аватара, як ми робили раніше
                                     const item = `
                                         <div class="search-item" onclick="window.location.href='profile.html?id=${targetId}'">
                                             <div style="display: flex; flex-direction: column;">

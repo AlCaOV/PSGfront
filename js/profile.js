@@ -11,7 +11,7 @@ function getCleanImageUrl(url) {
     if (!url) return ''; 
     if (url.startsWith('http')) return url;
     const cleanFileName = url.split('/').pop().split('\\').pop();
-    return `http://localhost:8080/api/images/${cleanFileName}`;
+    return `${API_BASE_URL}/api/images/${cleanFileName}`;
 }
 
 // ==========================================
@@ -25,7 +25,7 @@ async function loadUserPosts() {
         const urlParams = new URLSearchParams(window.location.search);
         let idFromUrl = urlParams.get('id');
 
-        const meRes = await fetch('http://localhost:8080/api/profiles/me', {
+        const meRes = await fetch(`${API_BASE_URL}/api/profiles/me`, {
             method: 'GET',
             headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -46,7 +46,7 @@ async function loadUserPosts() {
 
         await loadProfileHeader(targetUserId, token);
 
-        const response = await fetch(`http://localhost:8080/api/users/${targetUserId}/posts`, {
+        const response = await fetch(`${API_BASE_URL}/api/users/${targetUserId}/posts`, {
             method: 'GET',
             headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -86,7 +86,7 @@ async function loadUserPosts() {
 // ==========================================
 async function loadProfileHeader(userId, token) {
     try {
-        const profRes = await fetch(`http://localhost:8080/api/profiles/users/${userId}`, { headers: { 'Authorization': `Bearer ${token}` } });
+        const profRes = await fetch(`${API_BASE_URL}/api/profiles/users/${userId}`, { headers: { 'Authorization': `Bearer ${token}` } });
         if (profRes.ok) {
             const profile = await profRes.json();
             document.getElementById('profileFullName').textContent = profile.fullName || 'Користувач';
@@ -101,7 +101,7 @@ async function loadProfileHeader(userId, token) {
             }
         }
 
-        const followersRes = await fetch(`http://localhost:8080/api/friendships/users/${userId}/followers`, { headers: { 'Authorization': `Bearer ${token}` } });
+        const followersRes = await fetch(`${API_BASE_URL}/api/friendships/users/${userId}/followers`, { headers: { 'Authorization': `Bearer ${token}` } });
         if (followersRes.ok) {
             const data = await followersRes.json();
             const followersList = data._embedded ? data._embedded.friendshipResponseList : (Array.isArray(data) ? data : []);
@@ -115,7 +115,7 @@ async function loadProfileHeader(userId, token) {
             }
         }
 
-        const followingRes = await fetch(`http://localhost:8080/api/friendships/users/${userId}/followees`, { headers: { 'Authorization': `Bearer ${token}` } });
+        const followingRes = await fetch(`${API_BASE_URL}/api/friendships/users/${userId}/followees`, { headers: { 'Authorization': `Bearer ${token}` } });
         if (followingRes.ok) {
             const data = await followingRes.json();
             const followingList = data._embedded ? data._embedded.friendshipResponseList : (Array.isArray(data) ? data : []);
@@ -162,7 +162,7 @@ async function loadProfileHeader(userId, token) {
 async function followUser() {
     const token = localStorage.getItem('jwt_token') ? localStorage.getItem('jwt_token').replace(/"/g, '') : null;
     try {
-        const res = await fetch(`http://localhost:8080/api/friendships/users/${myId}/followees`, {
+        const res = await fetch(`${API_BASE_URL}/api/friendships/users/${myId}/followees`, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
@@ -183,7 +183,7 @@ async function unfollowUser() {
     if (!friendshipIdIfFollowing) return;
     const token = localStorage.getItem('jwt_token') ? localStorage.getItem('jwt_token').replace(/"/g, '') : null;
     try {
-        const res = await fetch(`http://localhost:8080/api/friendships/users/${myId}/${friendshipIdIfFollowing}`, {
+        const res = await fetch(`${API_BASE_URL}/api/friendships/users/${myId}/${friendshipIdIfFollowing}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -294,7 +294,7 @@ function showNextPosts() {
 async function toggleLike(postId) {
     const token = localStorage.getItem('jwt_token') ? localStorage.getItem('jwt_token').replace(/"/g, '') : null;
     try {
-        const response = await fetch(`http://localhost:8080/api/posts/${postId}/likes`, {
+        const response = await fetch(`${API_BASE_URL}/api/posts/${postId}/likes`, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({}) 
@@ -324,7 +324,7 @@ async function addComment(event, postId) {
     inputField.disabled = true;
 
     try {
-        const response = await fetch(`http://localhost:8080/api/posts/${postId}/comments`, {
+        const response = await fetch(`${API_BASE_URL}/api/posts/${postId}/comments`, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({ body: text }) 
@@ -373,7 +373,7 @@ async function loadStories(token) {
     container.innerHTML = ''; 
 
     try {
-        const res = await fetch(`http://localhost:8080/api/stories/users/${targetUserId}`, {
+        const res = await fetch(`${API_BASE_URL}/api/stories/users/${targetUserId}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
@@ -520,7 +520,7 @@ document.addEventListener('DOMContentLoaded', () => {
         async function loadMyAvatar() {
             if (!token) return;
             try {
-                const response = await fetch('http://localhost:8080/api/profiles/me', {
+                const response = await fetch(`${API_BASE_URL}/api/profiles/me`, {
                     method: 'GET', headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (response.ok) {
@@ -592,7 +592,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         shareBtn.textContent = 'Sharing...'; shareBtn.disabled = true;
         try {
-            const response = await fetch('http://localhost:8080/api/posts/with-media', {
+            const response = await fetch(`${API_BASE_URL}/api/posts/with-media`, {
                 method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: formData
             });
             if (response.ok) {
@@ -626,7 +626,7 @@ document.addEventListener('DOMContentLoaded', () => {
         confirmDeleteBtn.addEventListener('click', async () => {
             if (!postToDeleteId) return;
             try {
-                const res = await fetch(`http://localhost:8080/api/posts/${postToDeleteId}`, {
+                const res = await fetch(`${API_BASE_URL}/api/posts/${postToDeleteId}`, {
                     method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (res.ok || res.status === 204) {
@@ -688,7 +688,7 @@ document.addEventListener('DOMContentLoaded', () => {
             shareStoryBtn.disabled = true;
 
             try {
-                const response = await fetch(`http://localhost:8080/api/stories/with-media`, {
+                const response = await fetch(`${API_BASE_URL}/api/stories/with-media`, {
                     method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: formData
                 });
                 if (response.ok) {
@@ -727,7 +727,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (query.length > 0) {
                 searchTimeout = setTimeout(async () => {
                     try {
-                        const res = await fetch(`http://localhost:8080/api/profiles`, { headers: { 'Authorization': `Bearer ${token}` } });
+                        const res = await fetch(`${API_BASE_URL}/api/profiles`, { headers: { 'Authorization': `Bearer ${token}` } });
                         if (res.ok) {
                             let profiles = await res.json();
                             if (profiles._embedded && profiles._embedded.profileResponseList) profiles = profiles._embedded.profileResponseList;
